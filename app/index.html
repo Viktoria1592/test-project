@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopping List App</title>
+  <link rel="stylesheet" href="css/styles.min.css">
+</head>
+<body>
+	<section class="list-app">
+		<div class="app-tabs">
+		<ul>
+		<li>
+		<a class="app-tabs__item" href="#shopping-list">Shopping list</a>
+		</li>
+		<li>
+		<a class="app-tabs__item" href="#done">Done</a>
+		</li>
+		<li>
+		<a class="app-tabs__item" href="#deleted">Deleted</a>
+		</li>
+		</ul>
+      </div>
+		<div class="content-wrap">
+		<section class="shopping-list" id="shopping-list">
+		<div class="shopping-list__information">
+		<h2 class="shopping-list__title">Shopping list</h2>
+		<div class="shopping-list__fields">
+<form action="" method="get">
+  <input type="text" name="item" id="item" placeholder="Add items to your shopping list"><label for="item"></label>
+  <input type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
+  <input type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
+  <button type="submit">Add</button>
+</form>
+		</div>
+</div>
+		<table class="list">
+          <tr class="list__description  list__description--color">
+           <th>#</th>
+						      <th>Done</th>
+						      <th>Item</th>
+						      <th>Quantity</th>
+						      <th>Price $</th>
+						      <th>Action</th>
+
+          </tr>
+
+						    <tr class="list__item">
+						      <td>1</td>
+						      <td><input type="checkbox"></td>
+						      <td>Bread</td>
+						      <td>1</td>
+						      <td>1.99</td>
+						      <td><span></span>
+						      <span></span>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td>2</td>
+						       <td><input type="checkbox"></td>
+						      <td>Milk</td>
+						      <td>3L</td>
+						      <td>2.35</td>
+						       <td><span></span>
+						      <span></span>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td>3</td>
+						       <td><input type="checkbox"></td>
+						      <td>Eggs</td>
+						      <td>10</td>
+						      <td>2.99</td>
+						      <td><span></span>
+						      <span></span>
+						      </td>
+						    </tr>
+						    <tfoot>
+ <td></td>
+						      <td></td>
+						      <td></td>
+						      <td></td>
+						      <td>Total</td>
+						      <td>7.33</td>
+						    </tfoot>
+						  </table>
+						</section>
+						<section class="shopping-list" id="done"><p>2</p></section>
+						<section class="shopping-list" id="deleted"><p>3</p></section>
+					</div>
+			</section>
+</body>
+</html>
