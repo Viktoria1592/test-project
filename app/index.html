@@ -6,36 +6,90 @@
   <link rel="stylesheet" href="css/styles.min.css">
 </head>
 <body>
-	<section class="list-app">
+	<section class="list-app  no-js">
 		<div class="app-tabs">
-		<ul>
-		<li>
-		<a class="app-tabs__item" href="#shopping-list">Shopping list</a>
-		</li>
-		<li>
-		<a class="app-tabs__item" href="#done">Done</a>
-		</li>
-		<li>
-		<a class="app-tabs__item" href="#deleted">Deleted</a>
-		</li>
-		</ul>
+		<a class="app-tabs__item   app-tabs__item--color is-active" href="#">Shopping list</a>
+		<a class="app-tabs__item  app-tabs__item--color" href="#">Done</a>
+		<a class="app-tabs__item  app-tabs__item--color" href="#">Deleted</a>
       </div>
 		<div class="content-wrap">
-		<section class="shopping-list" id="shopping-list">
-		<div class="shopping-list__information">
-		<h2 class="shopping-list__title">Shopping list</h2>
+		<section class="shopping-list  is-active">
+		<div class="shopping-list__information  shopping-list__information--color">
+		<h2 class="shopping-list__title  shopping-list__title--border">Shopping list</h2>
 		<div class="shopping-list__fields">
-<form action="" method="get">
-  <input type="text" name="item" id="item" placeholder="Add items to your shopping list"><label for="item"></label>
-  <input type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
-  <input type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
-  <button type="submit">Add</button>
+<form action="" method="post">
+  <input class="shopping-list__input  shopping-list__input--big" type="text" name="item" id="item" placeholder="Add items to your Shopping list"><label for="item"></label>
+  <input class="shopping-list__input" type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
+  <input class="shopping-list__input" type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
+  <button class="btn  btn--green  btn--big" type="button">Add</button>
 </form>
 		</div>
 </div>
-		<table class="list">
+		<table class="list  list--color">
           <tr class="list__description  list__description--color">
-           <th>#</th>
+           <th class="list__number">#</th>
+						      <th>Done</th>
+						      <th>Item</th>
+						      <th>Quantity</th>
+						      <th>Price $</th>
+						      <th>Action</th>
+
+          </tr>
+
+<!--
+						    <tr class="list__item">
+						      <td class="list__number  counter">1</td>
+						      <td><input type="checkbox"></td>
+						      <td>Bread</td>
+						      <td>1</td>
+						      <td>1.99</td>
+						      <td class="list__button">
+                                  <button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+                                  <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td class="list__number  counter">2</td>
+						       <td><input type="checkbox"></td>
+						      <td>Milk</td>
+						      <td>3L</td>
+						      <td>2.35</td>
+						       <td class="list__button"><button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+						       <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td class="list__number  counter">3</td>
+						       <td><input type="checkbox"></td>
+						      <td>Eggs</td>
+						      <td>10</td>
+						      <td>2.99</td>
+						      <td class="list__button">
+						      <button class="btn  btn--edit  btn--orange  btn--small" type="submit"></button>
+						      <button class="btn  btn--point  btn--red  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+-->
+						    <tfoot>
+						    <tr class="list__item  list__item--color-gray">
+ <td></td>
+						      <td></td>
+						      <td></td>
+						      <td></td>
+						      <td>Total</td>
+						      <td class="list__sum"></td>
+                                </tr>
+						    </tfoot>
+						  </table>
+						</section>
+						<section class="shopping-list">
+						    <div class="shopping-list__information  shopping-list__information--big  shopping-list__information--color">
+		<h2 class="shopping-list__title">Done Items</h2>
+
+</div>
+		<table class="list  list--color">
+          <tr class="list__description  list__description--color">
+           <th class="list__number">#</th>
 						      <th>Done</th>
 						      <th>Item</th>
 						      <th>Quantity</th>
@@ -45,48 +99,124 @@
           </tr>
 
 						    <tr class="list__item">
-						      <td>1</td>
+						      <td class="list__number  counter">1</td>
 						      <td><input type="checkbox"></td>
 						      <td>Bread</td>
 						      <td>1</td>
 						      <td>1.99</td>
-						      <td><span></span>
-						      <span></span>
+						      <td class="list__button">
+                                  <button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+                                  <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
 						      </td>
 						    </tr>
 						    <tr class="list__item">
-						      <td>2</td>
+						      <td class="list__number  counter">2</td>
 						       <td><input type="checkbox"></td>
 						      <td>Milk</td>
 						      <td>3L</td>
 						      <td>2.35</td>
-						       <td><span></span>
-						      <span></span>
+						       <td class="list__button"><button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+						       <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
 						      </td>
 						    </tr>
 						    <tr class="list__item">
-						      <td>3</td>
+						      <td class="list__number  counter">3</td>
 						       <td><input type="checkbox"></td>
 						      <td>Eggs</td>
 						      <td>10</td>
 						      <td>2.99</td>
-						      <td><span></span>
-						      <span></span>
+						      <td class="list__button">
+						      <button class="btn  btn--edit  btn--orange  btn--small" type="submit"></button>
+						      <button class="btn  btn--point  btn--red  btn--small" type="submit"></button>
 						      </td>
 						    </tr>
 						    <tfoot>
+						    <tr class="list__item  list__item--color-gray">
  <td></td>
 						      <td></td>
 						      <td></td>
 						      <td></td>
 						      <td>Total</td>
-						      <td>7.33</td>
+						      <td class="list__sum">7.33</td>
+                                </tr>
 						    </tfoot>
 						  </table>
 						</section>
-						<section class="shopping-list" id="done"><p>2</p></section>
-						<section class="shopping-list" id="deleted"><p>3</p></section>
+						<section class="shopping-list">
+						    <div class="shopping-list__information  shopping-list__information--big  shopping-list__information--color">
+		<h2 class="shopping-list__title">Deleted</h2>
+
+</div>
+		<table class="list  list--color">
+          <tr class="list__description  list__description--color">
+           <th class="list__number">#</th>
+						      <th>Done</th>
+						      <th>Item</th>
+						      <th>Quantity</th>
+						      <th>Price $</th>
+						      <th>Action</th>
+
+          </tr>
+
+						    <tr class="list__item">
+						      <td class="list__number  counter">1</td>
+						      <td><input type="checkbox"></td>
+						      <td>Bread</td>
+						      <td>1</td>
+						      <td>1.99</td>
+						      <td class="list__button">
+                                  <button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+                                  <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td class="list__number  counter">2</td>
+						       <td><input type="checkbox"></td>
+						      <td>Milk</td>
+						      <td>3L</td>
+						      <td>2.35</td>
+						       <td class="list__button"><button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+						       <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+						    <tr class="list__item">
+						      <td class="list__number  counter">3</td>
+						       <td><input type="checkbox"></td>
+						      <td>Eggs</td>
+						      <td>10</td>
+						      <td>2.99</td>
+						      <td class="list__button">
+						      <button class="btn  btn--edit  btn--orange  btn--small" type="submit"></button>
+						      <button class="btn  btn--point  btn--red  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+						    <tfoot>
+						    <tr class="list__item  list__item--color-gray">
+ <td></td>
+						      <td></td>
+						      <td></td>
+						      <td></td>
+						      <td>Total</td>
+						      <td class="list__sum"></td>
+                                </tr>
+						    </tfoot>
+						  </table>
+						</section>
 					</div>
 			</section>
+			<template id="good-template" style="display: none">
+			   <tr class="list__item">
+						      <td class="list__number  counter"></td>
+						      <td><input type="checkbox"></td>
+						      <td></td>
+						      <td></td>
+						      <td class="list__price">2</td>
+						      <td class="list__button">
+                                  <button class="btn  btn--orange  btn--edit  btn--small" type="submit"></button>
+                                  <button class="btn  btn--red  btn--point  btn--small" type="submit"></button>
+						      </td>
+						    </tr>
+			</template>
+			<script src="js/main.min.js"></script>
 </body>
 </html>

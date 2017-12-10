@@ -1,0 +1,65 @@
+.btn {
+    border: none;
+    outline: none;
+    color: $color-head;
+    text-align: center;
+    border-radius: 3px;
+  &:hover {
+    cursor: pointer;
+  }
+    &--green {
+        background-color: $color-green;
+    }
+     &--blue {
+        background-color: $color-blue-light;
+    }
+      &--orange {
+        background-color: #ffc107;
+    }
+      &--red {
+        background-color: #dc3545;
+    }
+    &--big {
+        width: 89px;
+         padding-top: 10px;
+    padding-bottom: 10px;
+    }
+    &--small {
+        width: 40px;
+        height: 37px;
+    }
+    &--edit {
+        position: relative;
+        &::before {
+            position: absolute;
+            content: "";
+            background-image: url(../../img/icon-edit.svg);
+        width: 20px;
+        height: 20px;
+             top: 25%;
+            left: 25%;
+        }
+    }
+    &--point {
+        position: relative;
+        &::before,
+        &::after {
+            position: absolute;
+            content: "";
+            background-color:  $color-head;
+            width: 15px;
+            height: 4px;
+            top: 45%;
+            left: 35%;
+        }
+        &::before {
+            transform: rotate(45deg);
+
+        }
+         &::after {
+            transform: rotate(-45deg);
+
+        }
+    }
+
+}

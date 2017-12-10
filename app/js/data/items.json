@@ -1,0 +1,14 @@
+{
+    "site": "weblab.ua",
+    "title": "Создание сайтов",
+    "type": "web",
+    "description": "Разработка сайтов",
+    "objectData": {
+        "test1": 1,
+        "test2": 2
+    },
+    "arrayData": [
+        1,
+        2
+    ]
+}

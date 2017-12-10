@@ -1,8 +1,49 @@
 .list {
+    border-collapse: collapse;
+    width: 100%;
+//    border: 3px solid black;
+    font-weight: 300;
+    &--color {
+        color: $color-deep-blue;
+    }
   &__description {
+      font-weight: 700;
+
     &--color {
 color: $color-head;
-      font-weight: 700;
-    }
+        background-color: $color-deep-blue;
+      }
+      & th {
+          padding-top: 20px;
+        padding-bottom: 20px; 
+          text-align: left;
+      }
   }
+    &__item {
+        &--color {
+        background-color: #ececec;
+        }
+        &--color-gray {
+            background-color: #dadada;
+        }
+        & td {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    }
+    &__number {
+        font-weight: 700;
+        padding-left: 10px;
+    }
+    &__sum {
+        text-align: right;
+        padding-right: 10px;
+    }
+    &__button {
+        text-align: right;
+        padding-right: 10px;
+    }
 }
+//td {
+//    border: 3px solid black;
+//}

@@ -11,6 +11,8 @@ var run = require('run-sequence');
 var postcss = require("gulp-postcss");
 var plumber = require('gulp-plumber');
 var rigger = require('gulp-rigger');
+var imagemin = require('gulp-imagemin');
+var changed = require('gulp-changed');
 
 gulp.task('html', function () {
     gulp.src('app/*.html') //Выберем файлы по нужному пути
@@ -37,21 +39,47 @@ gulp.task('sass', function () { // Создаем таск "sass"
 });
 
 gulp.task('scripts', function () {
-    return gulp.src(['app/js/**/*', '!app/js/libs/**/*', '!app/js/libs']) //при необходимости указываем нужные файлы библиотек
-        .pipe(plumber()).pipe(concat('main.min.js')).pipe(uglify()).pipe(gulp.dest('build/js')).pipe(browserSync.reload({
+    return gulp.src(['app/js/**/*', '!app/js/data/**/*', '!app/js/data']) //при необходимости указываем нужные файлы библиотек
+        .pipe(plumber()).pipe(concat('main.min.js')).pipe(gulp.dest('build/js')).pipe(browserSync.reload({
             stream: true
         }))
 });
 
+gulp.task('image', function () {
+    return gulp.src('app/img/**/*').pipe(imagemin([
+    imagemin.gifsicle({
+            interlaced: true
+        })
 
+        , imagemin.jpegtran({
+            progressive: true
+        })
 
+        , imagemin.optipng({
+            optimizationLevel: 3
+        })
+
+        , imagemin.svgo({
+            plugins: [
+                {
+                    removeViewBox: false
+        }
+            ]
+        })
+])).pipe(gulp.dest('build/img')).pipe(browserSync.reload({
+        stream: true
+    }))
+});
+gulp.task('copy', function () {
+    gulp.src('app/js/data/**/*').pipe(changed('build')).pipe(gulp.dest('build/js/data'))
+});
 
 
 gulp.task('clean', function () {
     return del('build/**/*')
 });
 gulp.task('build', function (fn) {
-    run('clean',  'html', 'sass', 'scripts', fn)
+    run('clean',  'html', 'sass', 'scripts', 'image', 'copy', fn)
 });
 
 
@@ -67,6 +95,7 @@ gulp.task('watch', ['browser-sync'], function () {
     gulp.watch('app/sass/**/*.scss', ['sass']); // Наблюдение за sass файлами в папке sass
     gulp.watch('app/**/*.html', ['html']); // Наблюдение за HTML файлами в корне проекта
     gulp.watch('app/js/*.js', ['scripts']); // Наблюдение за JS файлами в папке js
+    gulp.watch('app/img/**/*', ['image'])
 });
 gulp.task('default', function () {
     run('build', ['watch'])

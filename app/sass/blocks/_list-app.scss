@@ -1,3 +1,26 @@
 .list-app {
 display: flex;
+    padding-top: 25px;
+}
+.app-tabs {
+    min-width: 350px;
+    &__item {
+        display: block;
+        text-decoration: none;
+        padding: 15px;
+//        min-width: 350px;
+        &--color {
+        color: $color-blue;
+    } 
+    }
+    &__item.is-active {
+        color: $color-head;
+        background-color: $color-blue;
+        border-radius: 3px;
+    }
+}
+.content-wrap {
+    margin-left: 32px;
+    min-width: 730px;
+    flex-grow: 1;
 }
