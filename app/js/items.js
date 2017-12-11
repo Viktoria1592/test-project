@@ -9,6 +9,13 @@
   var Container = document.querySelector('.list');
   var ItemSum  = Container.querySelector('.list__sum');
   var template = document.querySelector('#good-template');
+   var ActiveItemsTable = document.querySelector('.active');
+  var DoneItemsTable = document.querySelector('.done');
+  var DeletedItemsTable = document.querySelector('.deleted');
+
+//  var templateItem = template.querySelector('.list__item');
+//  var templateQuantity = template.querySelector('.list__quantity');
+//  var templatePrice = template.querySelector('.list__price');
 
 //  var ListNumber = Container.querySelector('.counter');
 
@@ -73,6 +80,13 @@
 //          var formData = new FormData(Form);
 //           xhr.send(formData);
          renderItems(item);
+          CopyItem();
+           ItemSum.innerHTML = sum();
+
+
+
+          EditandDeletedItem()
+//          templateItem.innerHTML = ItemName.value;
     };
     });
 //}
@@ -85,11 +99,70 @@
      for (var i = 0; i < ListNumber.length; i++) {
     ListNumber[i].innerHTML = i;
   };
+// var templateItem = Container.querySelectorAll('.list__name');
+//    for (var i = 0; i < templateItem.length; i++) {
+//      templateItem[i].innerHTML = ItemName.value;
+//    }
+//  var templateQuantity = Container.querySelectorAll('.list__quantity');
+//     for (var i = 0; i < templateQuantity.length; i++) {
+//      templateQuantity[i].innerHTML = ItemQuantity.value;
+//    }
+//  var templatePrice = Container.querySelectorAll('.list__price');
+//     for (var i = 0; i < templatePrice.length; i++) {
+//      templatePrice[i].innerHTML = ItemPrice.value;
+//    }
 
 
 
-    ItemSum.innerHTML = sum();
   };
+
+  function CopyItem() {
+    var templateItem = Container.querySelectorAll('.list__name');
+    for (var i = 0; i < templateItem.length; i++) {
+      templateItem[i].innerHTML = ItemName.value;
+    }
+  var templateQuantity = Container.querySelectorAll('.list__quantity');
+     for (var i = 0; i < templateQuantity.length; i++) {
+      templateQuantity[i].innerHTML = ItemQuantity.value;
+    }
+  var templatePrice = Container.querySelectorAll('.list__price');
+     for (var i = 0; i < templatePrice.length; i++) {
+      templatePrice[i].innerHTML = ItemPrice.value;
+    }
+//    ItemSum.innerHTML = sum();
+
+
+  }
+//  var ButtonEdit = Container.querySelectorAll('.btn--edit');
+//   var ButtonDelete = Container.querySelectorAll('.btn--deleted');
+
+//   ButtonEdit.onclick = function() {
+//      console.log('hello');
+//    }
+
+  function EditandDeletedItem() {
+      var ButtonEdit = Container.querySelector('.btn--edit');
+    var ButtonDelete = Container.querySelector('.btn--deleted');
+
+
+
+    ButtonEdit.onclick = function () {
+      console.log('hello');
+    }
+    ButtonDelete.onclick = function () {
+
+    var DeletedItem = ButtonDelete.parentNode.parentNode.cloneNode(true);
+    DeletedItemsTable.insertBefore(DeletedItem, DeletedItemsTable.children[1]);
+    ActiveItemsTable.removeChild(ButtonDelete.parentNode.parentNode);
+//      DeletedItem.removeChild(lastElementChild.firstElementChild);
+
+
+
+
+    }
+  }
+
+
 
 //  ButtonAdd.onclick = function() {
 //    renderItems(item);
@@ -109,20 +182,21 @@
 //    ListNumber[i].innerHTML = i;
 //  }
 //  })
-
 function sum () {
-//  var result;
 var result = 0;
   var ListPrice = Container.querySelectorAll('.list__price');
   for (var i = 0; i < ListPrice.length; i++) {
-     var ListPriceValue = parseInt(ListPrice[i].innerHTML);
+     var ListPriceValue = ListPrice[i].innerHTML;
   };
   for (var i = 0; i < ListPriceValue.length; i++) {
-    result += ListPriceValue[i];
-//    result += B[i];
+
+
+    result += parseInt(ListPriceValue[i]);
+    return result;
+
   }
-  return result;
-//  return B;
+//  return result;
+
 }
 
 //  function sendItem() {
@@ -137,5 +211,6 @@ var result = 0;
 
 //    xhr.send();
 //  }
+
   })();
 
