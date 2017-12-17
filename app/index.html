@@ -18,9 +18,9 @@
 		<h2 class="shopping-list__title  shopping-list__title--border">Shopping list</h2>
 		<div class="shopping-list__fields">
 <form action="" method="post">
-  <input class="shopping-list__input  shopping-list__input--big" type="text" name="item" id="item" placeholder="Add items to your Shopping list"><label for="item"></label>
-  <input class="shopping-list__input" type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
-  <input class="shopping-list__input" type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
+  <input class="shopping-list__input  shopping-list__input--big" data-type="item" type="text" name="item" id="item" placeholder="Add items to your Shopping list"><label for="item"></label>
+  <input class="shopping-list__input" data-type="quantity" type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
+  <input class="shopping-list__input" data-type="price" type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
   <button class="btn  btn--green  btn--big" type="button">Add</button>
 </form>
 		</div>
@@ -111,7 +111,7 @@
 						      <td><input class="list__done" type="checkbox"></td>
 						      <td class="list__name"></td>
 						      <td class="list__quantity"></td>
-						      <td class="list__price">2</td>
+						      <td class="list__price"></td>
 						      <td class="list__button">
                                   <button class="btn  btn--orange  btn--edit  btn--small" type="button" title="Edit"></button>
                                   <button class="btn  btn--red  btn--deleted  btn--small" type="button" title="Delete"></button>
