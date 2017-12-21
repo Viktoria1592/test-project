@@ -50,8 +50,20 @@
       event.preventDefault();
       alert(validationMessage);
     } else {
-      pushToArr(getCurrentSectionName() ,item);
-      renderItem(item);
+      if(this.innerHTML === 'Add') {
+        pushToArr(getCurrentSectionName() ,item);
+        renderItem(item);
+      } else {
+        var element = document.querySelector(".editable");
+        var id = Number(element.firstElementChild.innerHTML) - 1;
+        updateArrElem(ActiveItemsTable.id, id, item);
+        copyItem(element, item);
+        resetForm();
+        sum();
+        ActiveItemsTable.style.pointerEvents = 'auto';
+        element.classList.remove('editable');
+        element.style.backgroundColor = 'initial';
+      }
     };
   });
 
@@ -69,13 +81,13 @@
     var element = getElementFromTemplate();
     var container = container || Container;
     container.appendChild(element);
-    CopyItem(element, item);
-    initDelete(element);
-    doneItem(element);
+    copyItem(element, item);
     calcPosition()
     sum();
     resetForm();
+    doneItem(element);
     initEdit(element);
+    initDelete(element);
   };
 
 
@@ -87,7 +99,7 @@
     });
   }
 
-  function CopyItem(parent, item) {
+  function copyItem(parent, item) {
     if(parent && item) {
       parent.querySelector('.list__name').innerHTML = item.name;
       parent.querySelector('.list__quantity').innerHTML = item.quantity;
@@ -173,46 +185,29 @@
   }
 
   
-    function editItem() {
+    function editItem(element) {
+      var id = Number(element.firstElementChild.innerHTML) - 1;
+      element.style.backgroundColor = 'skyblue';
+      element.classList.add('editable');
 
-    var parent = getParents(this, 'tr')[0];
-    parent.style.backgroundColor = 'skyblue';
+      var item = getFromLocalStorage(ActiveItemsTable.id)[id];
+      ItemName.value = item.name;
+      ItemQuantity.value = item.quantity;
+      ItemPrice.value = item.price;
 
-    ButtonAdd.classList.remove('btn--green');
-    ButtonAdd.classList.add('btn--blue');
-    ButtonAdd.innerHTML = 'Update';
+      ButtonAdd.classList.remove('btn--green');
+      ButtonAdd.classList.add('btn--blue');
+      ButtonAdd.innerHTML = 'Update';
 
-    ButtonAdd.onclick = updateItem;
-
-  
-    function getData(type) {
-       
-      return parent.querySelector('[data-type=' + type + ']').innerHTML;
+      ActiveItemsTable.style.pointerEvents = 'none';
     }
 
-    
-    function setData(type, value) {
-      Form.querySelector('[data-type=' + type + ']').value = value;
-    }
-
-   
-    setData('item', getData('item'));
-    setData('price', getData('price'));
-    setData('quantity', getData('quantity'));
-  }
-      function updateItem() {
-    var parent = document.querySelector('tr.table-primary');
-
-   CopyItem(parent);
-    resetForm();
-    calcSum();
-  }
       function initEdit(element) {
         var container = element.parentElement;
         var editButton = element.querySelector(".btn--edit");
         if(container === ActiveItemsTable) {
           editButton.style.display = 'initial';
-          editButton.addEventListener('click', editItem.bind(element));
+          editButton.addEventListener('click', editItem.bind(element, element));
         } else {
           editButton.style.display = 'none';
         }
@@ -272,6 +267,12 @@
       let arr = getFromLocalStorage(arrName);
       arr.splice(id, 0, item);
       setToLocalStorage(arrName, arr);
+  }
+
+  function updateArrElem(arrName, id, newItem) {
+    let arr = getFromLocalStorage(arrName);
+    arr[id] = newItem;
+    setToLocalStorage(arrName, arr);
   }
 
   function getCurrentSectionName() {
