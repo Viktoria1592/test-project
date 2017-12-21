@@ -12,22 +12,19 @@
   var DoneItemsTable = document.querySelector('.done');
   var DeletedItemsTable = document.querySelector('.deleted');
 
-
-  Form.addEventListener('change', function (event) {
-    if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
-      event.preventDefault();
-    } else {
-      ButtonAdd.innerHTML = 'Update';
-      ButtonAdd.classList.remove('btn--green');
-      ButtonAdd.classList.add('btn--blue');
-    }
-  });
+  // This should be refactored
+  // Form.addEventListener('change', function (event) {
+  //   if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
+  //     event.preventDefault();
+  //   } else {
+  //     ButtonAdd.innerHTML = 'Update';
+  //     ButtonAdd.classList.remove('btn--green');
+  //     ButtonAdd.classList.add('btn--blue');
+  //   }
+  // });
 
   function resetForm() {
-    [].forEach.call(Form.querySelectorAll('input'), function (el) {
-      el.value = '';
-    });
-
+    Form.reset();
     ButtonAdd.innerHTML = 'Add';
     ButtonAdd.classList.remove('btn--blue');
     ButtonAdd.classList.add('btn--green');
@@ -43,12 +40,25 @@
   }
 
   ButtonAdd.addEventListener('click', function (event) {
-    if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
+    var item = {done: false, name: ItemName.value, quantity: ItemQuantity.value, price: ItemPrice.value};
+    let validationMessage = validateItem(item);
+    if(validationMessage) {
       event.preventDefault();
+      alert(validationMessage);
     } else {
       renderItems();
     };
   });
+
+  function validateItem(item) {   
+    if(!item.name || !item.quantity || !item.price) {
+        return "All fields are required";
+    }
+    if(isNaN(item.price) || item.price <= 0) {
+        return "'Price' is invalid";
+    }
+    return "";                
+}
 
   function renderItems() {
     var element = getElementFromTemplate(item);
@@ -97,7 +107,7 @@
       [].forEach.call(Container.querySelectorAll('.list__done'), function (el) {
       el.addEventListener('click', function() {
             if (el.checked) {
-        var DoneItem = el.parentNode.parentNode.cloneNode(true);
+        var DoneItem = el.parentNode.parentNode.cloneNode(true); // cloning a node does not copy event listeners
         DoneItemsTable.insertBefore(DoneItem, DoneItemsTable.children[1]);
         ActiveItemsTable.removeChild(el.parentNode.parentNode);
         var DoneButton = DoneItem.querySelector('.btn--edit');
@@ -218,4 +228,31 @@ var parent = getParents(this, 'tr')[0];
 
   };
 
+  /* Utility functions */
+  function getFromLocalStorage(name, isArr = true) {
+    return localStorage.getItem(name) ? JSON.parse(localStorage.getItem(name)) : (isArr? [] : {})
+  }
+
+  function setToLocalStorage(name, obj) {
+    localStorage.setItem(name, JSON.stringify(obj));
+  }
+
+  function deleteFromArr(arrName, id) {
+    let arr = getFromLocalStorage(arrName);
+    let deleted = arr.splice(id, 1);
+    setToLocalStorage(arrName, arr);
+    return deleted[0];
+  }
+
+  function pushToArr(arrName, item) {
+      let arr = getFromLocalStorage(arrName);
+      arr.push(item);
+      setToLocalStorage(arrName, arr);
+  }
+
+  function insertToArr(arrName, id, item) {
+      let arr = getFromLocalStorage(arrName);
+      arr.splice(id, 0, item);
+      setToLocalStorage(arrName, arr);
+  }
 })();

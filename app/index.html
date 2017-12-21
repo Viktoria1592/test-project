@@ -17,10 +17,11 @@
 		<div class="shopping-list__information  shopping-list__information--color">
 		<h2 class="shopping-list__title  shopping-list__title--border">Shopping list</h2>
 		<div class="shopping-list__fields">
-<form action="" method="post">
-  <input class="shopping-list__input  shopping-list__input--big" data-type="item" type="text" name="item" id="item" placeholder="Add items to your Shopping list"><label for="item"></label>
-  <input class="shopping-list__input" data-type="quantity" type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
-  <input class="shopping-list__input" data-type="price" type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
+			
+<form action="" method="post" onsubmit="return false;"><!-- Prevent form submittion -->
+  <input class="shopping-list__input  shopping-list__input--big" data-type="item" type="text" name="item" id="item" placeholder="Add items to your Shopping list">
+  <input class="shopping-list__input" data-type="quantity" type="text" name="quantity" id="quantity" placeholder="Quant.">
+  <input class="shopping-list__input" data-type="price" type="text" name="price" id="price" placeholder="Price">
   <button class="btn  btn--green  btn--big" type="button">Add</button>
 </form>
 		</div>
