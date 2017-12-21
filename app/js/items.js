@@ -12,28 +12,29 @@
   var DoneItemsTable = document.querySelector('.done');
   var DeletedItemsTable = document.querySelector('.deleted');
 
+  var initTables = function() {
+    var tabNavigationLinks = document.querySelectorAll("a.app-tabs__item");
+    [].forEach.call(tabNavigationLinks, el => {
+      populateTable(el.innerHTML);
+    })
+  }();
 
-  Form.addEventListener('change', function (event) {
-    if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
-      event.preventDefault();
-    } else {
-      ButtonAdd.innerHTML = 'Update';
-      ButtonAdd.classList.remove('btn--green');
-      ButtonAdd.classList.add('btn--blue');
-    }
-  });
+  function populateTable(tableId) {
+    var arr = getFromLocalStorage(tableId);
+    var container = document.getElementById(tableId);
+    arr.forEach(el => {
+        renderItem(el, container);
+    });
+  }
 
   function resetForm() {
-    [].forEach.call(Form.querySelectorAll('input'), function (el) {
-      el.value = '';
-    });
-
+    Form.reset();
     ButtonAdd.innerHTML = 'Add';
     ButtonAdd.classList.remove('btn--blue');
     ButtonAdd.classList.add('btn--green');
   }
 
-  function getElementFromTemplate(data) {
+  function getElementFromTemplate() {
     if ('content' in template) {
       var element = template.content.children[0].cloneNode(true);
     } else {
@@ -43,79 +44,133 @@
   }
 
   ButtonAdd.addEventListener('click', function (event) {
-    if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
+    var item = {done: false, name: ItemName.value, quantity: ItemQuantity.value, price: ItemPrice.value};
+    let validationMessage = validateItem(item);
+    if(validationMessage) {
       event.preventDefault();
+      alert(validationMessage);
     } else {
-      renderItems();
+      if(this.innerHTML === 'Add') {
+        pushToArr(getCurrentSectionName() ,item);
+        renderItem(item);
+      } else {
+        var element = document.querySelector(".editable");
+        var id = Number(element.firstElementChild.innerHTML) - 1;
+        updateArrElem(ActiveItemsTable.id, id, item);
+        copyItem(element, item);
+        resetForm();
+        sum();
+        ActiveItemsTable.style.pointerEvents = 'auto';
+        element.classList.remove('editable');
+        element.style.backgroundColor = 'initial';
+      }
     };
   });
 
-  function renderItems() {
-    var element = getElementFromTemplate(item);
-    Container.appendChild(element);
-    CopyItem(element);
-    initDelete();
-    DoneItems();
+  function validateItem(item) {   
+    if(!item.name || !item.quantity || !item.price) {
+        return "All fields are required";
+    }
+    if(isNaN(item.price) || item.price <= 0) {
+        return "'Price' is invalid";
+    }
+    return "";                
+}
+
+  function renderItem(item, container) {
+    var element = getElementFromTemplate();
+    var container = container || Container;
+    container.appendChild(element);
+    copyItem(element, item);
     calcPosition()
     sum();
     resetForm();
-    initEdit();
-
+    doneItem(element);
+    initEdit(element);
+    initDelete(element);
   };
+
 
   function calcPosition() {
     [].forEach.call(Tables, function (el) {
-      [].forEach.call(el.querySelectorAll('.counter'), function (number) {
-        number.innerHTML = number.parentNode.rowIndex;
+      [].forEach.call(el.querySelectorAll('.counter'), function (number, index) {
+        number.innerHTML = index + 1;
       });
     });
   }
 
+  function copyItem(parent, item) {
+    if(parent && item) {
+      parent.querySelector('.list__name').innerHTML = item.name;
+      parent.querySelector('.list__quantity').innerHTML = item.quantity;
+      parent.querySelector('.list__price').innerHTML = +item.price;
+      parent.querySelector('.list__done').checked = item.done;
+    }
+  }
+    function initDelete(element) {
+      var container = element.parentElement;
+      if(container !== DeletedItemsTable) {
+        element.querySelector(".btn--deleted").addEventListener('click', RemoveItemsinDelete.bind(element, container));
+      } else {
+        element.querySelector(".btn--deleted").addEventListener('click', function() {
+          if(window.confirm('Delete the item permanently?')) {
+            var tr = getParents(this, 'tr')[0]
+            var id = Number(tr.firstElementChild.innerHTML) - 1;
+            deleteFromArr(DeletedItemsTable.id, id);
+            DeletedItemsTable.removeChild(tr);
+            sum();
+          }
+        });
+      }
 
-  function CopyItem(parent) {
-    parent.querySelector('.list__name').innerHTML = ItemName.value;
-    parent.querySelector('.list__quantity').innerHTML = ItemQuantity.value;
-    parent.querySelector('.list__price').innerHTML = ItemPrice.value;
   }
-    function initDelete() {
-        [].forEach.call(document.querySelectorAll('.btn--deleted'), function (el) {
-      el.addEventListener('click', RemoveItemsinDelete);
-    });
-  }
-    function RemoveItemsinDelete() {
-        var Button = document.querySelector('.btn--deleted');
-      var DeletedItem = Button.parentNode.parentNode.cloneNode(true);
-             DeletedItemsTable.insertBefore(DeletedItem, DeletedItemsTable.children[1]);
-      ActiveItemsTable.removeChild(Button.parentNode.parentNode);
+    function RemoveItemsinDelete(container) {
+      var Button = this.querySelector('.btn--deleted');
+      var tr = getParents(Button, 'tr')[0];
+      var id = Number(tr.firstElementChild.innerHTML) - 1;
+      var deleted = deleteFromArr(container.id, id);
+      pushToArr(DeletedItemsTable.id, deleted);
+      var DeletedItem = tr.cloneNode(true);
+      DeletedItemsTable.appendChild(DeletedItem);
+      container.removeChild(tr);
       var DeleteButton = DeletedItem.querySelector('.btn--edit');
       DeleteButton.style.display = 'none';
-      Delete();
         sum();
         calcPosition();
+        initDelete(DeletedItem);
     }
-      function DoneItems() {
-      [].forEach.call(Container.querySelectorAll('.list__done'), function (el) {
-      el.addEventListener('click', function() {
-            if (el.checked) {
-        var DoneItem = el.parentNode.parentNode.cloneNode(true);
-        DoneItemsTable.insertBefore(DoneItem, DoneItemsTable.children[1]);
-        ActiveItemsTable.removeChild(el.parentNode.parentNode);
-        var DoneButton = DoneItem.querySelector('.btn--edit');
-        DoneButton.style.display = 'none';
-        var ButtonDeleteinDone = DoneItemsTable.querySelector('.btn--deleted');
-        ButtonDeleteinDone.onclick = function () {
-          var DeletedIteminDone = ButtonDeleteinDone.parentNode.parentNode.cloneNode(true);
-          DeletedItemsTable.insertBefore(DeletedIteminDone, DeletedItemsTable.children[1]);
-          DoneItemsTable.removeChild(ButtonDeleteinDone.parentNode.parentNode);
+    function doneItem(element) {
+      element.querySelector('.list__done').addEventListener('click', function() {
+
+        var container = getParents(this, 'table')[0];
+        if (container !== DeletedItemsTable) {
+          var tr = getParents(this, 'tr')[0];
+          var id = Number(tr.firstElementChild.innerHTML) - 1;
+          var DoneItem = tr.cloneNode(true);
+          if (this.checked) {
+            var deleted = deleteFromArr(ActiveItemsTable.id, id);
+            deleted.done = true;
+            pushToArr(DoneItemsTable.id, deleted);
+            DoneItem.querySelector('.list__done').checked;
+            DoneItemsTable.appendChild(DoneItem);
+            ActiveItemsTable.removeChild(tr);
+          } else {
+            var deleted = deleteFromArr(DoneItemsTable.id, id);
+            deleted.done = false;
+            pushToArr(ActiveItemsTable.id, deleted);
+            DoneItem.querySelector('.list__done').checked = false;
+            ActiveItemsTable.appendChild(DoneItem);
+            DoneItemsTable.removeChild(tr);
+          }
+          doneItem(DoneItem);
+          initDelete(DoneItem);
+          initEdit(DoneItem);
+          sum();
+          calcPosition();
         }
-         Delete();
-            sum();
-        calcPosition();
-      }
       });
                 
-    });
-  };
+    }
       
   function sum() {
       [].forEach.call(Tables, function (el) {
@@ -129,59 +184,35 @@
     });
   }
 
-
-  function Delete() {
-       [].forEach.call(DeletedItemsTable.querySelectorAll('.btn--deleted'), function (el) {
-      el.addEventListener('click', function() {
-          DeletedItemsTable.removeChild(el.parentNode.parentNode);
-      });
-    });
-}
   
-    function editItem() {
-var parent = getParents(this, 'tr')[0];
+    function editItem(element) {
+      var id = Number(element.firstElementChild.innerHTML) - 1;
+      element.style.backgroundColor = 'skyblue';
+      element.classList.add('editable');
 
-    [].forEach.call(ActiveItemsTable.querySelectorAll('.list__item--copy'), function (el) {
-        el.style.backgroundColor = 'skyblue';
+      var item = getFromLocalStorage(ActiveItemsTable.id)[id];
+      ItemName.value = item.name;
+      ItemQuantity.value = item.quantity;
+      ItemPrice.value = item.price;
 
-    });
+      ButtonAdd.classList.remove('btn--green');
+      ButtonAdd.classList.add('btn--blue');
+      ButtonAdd.innerHTML = 'Update';
 
-    ButtonAdd.classList.remove('btn--green');
-    ButtonAdd.classList.add('btn--blue');
-    ButtonAdd.innerHTML = 'Update';
-
-    ButtonAdd.onclick = updateItem;
-
-  
-    function getData(type) {
-       
-      return parent.querySelector('[data-type=' + type + ']').innerHTML;
+      ActiveItemsTable.style.pointerEvents = 'none';
     }
 
-    
-    function setData(type, value) {
-      Form.querySelector('[data-type=' + type + ']').value = value;
-    }
-
-   
-    setData('item', getData('item'));
-    setData('price', getData('price'));
-    setData('quantity', getData('quantity'));
-  }
-      function updateItem() {
-    var parent = document.querySelector('tr.table-primary');
-
-   CopyItem(parent);
-    resetForm();
-    calcSum();
-  }
-      function initEdit() {
-    [].forEach.call(ActiveItemsTable.querySelectorAll('.btn--edit'), function (el) {
-      el.addEventListener('click', editItem);
-    });
-  }
+      function initEdit(element) {
+        var container = element.parentElement;
+        var editButton = element.querySelector(".btn--edit");
+        if(container === ActiveItemsTable) {
+          editButton.style.display = 'initial';
+          editButton.addEventListener('click', editItem.bind(element, element));
+        } else {
+          editButton.style.display = 'none';
+        }
+      }
   var getParents = function (elem, selector) {
-
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.matchesSelector ||
@@ -196,14 +227,9 @@ var parent = getParents(this, 'tr')[0];
           return i > -1;
         };
     }
-
  
     var parents = [];
-
-   
     for (; elem && elem !== document; elem = elem.parentNode) {
-
-     
       if (selector) {
         if (elem.matches(selector)) {
           parents.push(elem);
@@ -211,11 +237,45 @@ var parent = getParents(this, 'tr')[0];
       } else {
         parents.push(elem);
       }
-
     }
-
     return parents;
-
   };
 
+  /* Utility functions */
+  function getFromLocalStorage(name, isArr = true) {
+    return localStorage.getItem(name) ? JSON.parse(localStorage.getItem(name)) : (isArr? [] : {})
+  }
+
+  function setToLocalStorage(name, obj) {
+    localStorage.setItem(name, JSON.stringify(obj));
+  }
+
+  function deleteFromArr(arrName, id) {
+    let arr = getFromLocalStorage(arrName);
+    let deleted = arr.splice(id, 1);
+    setToLocalStorage(arrName, arr);
+    return deleted[0];
+  }
+
+  function pushToArr(arrName, item) {
+      let arr = getFromLocalStorage(arrName);
+      arr.push(item);
+      setToLocalStorage(arrName, arr);
+  }
+
+  function insertToArr(arrName, id, item) {
+      let arr = getFromLocalStorage(arrName);
+      arr.splice(id, 0, item);
+      setToLocalStorage(arrName, arr);
+  }
+
+  function updateArrElem(arrName, id, newItem) {
+    let arr = getFromLocalStorage(arrName);
+    arr[id] = newItem;
+    setToLocalStorage(arrName, arr);
+  }
+
+  function getCurrentSectionName() {
+    return document.querySelector("a.is-active").innerHTML;
+  }
 })();

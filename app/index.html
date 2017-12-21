@@ -17,15 +17,16 @@
 		<div class="shopping-list__information  shopping-list__information--color">
 		<h2 class="shopping-list__title  shopping-list__title--border">Shopping list</h2>
 		<div class="shopping-list__fields">
-<form action="" method="post">
-  <input class="shopping-list__input  shopping-list__input--big" data-type="item" type="text" name="item" id="item" placeholder="Add items to your Shopping list"><label for="item"></label>
-  <input class="shopping-list__input" data-type="quantity" type="text" name="quantity" id="quantity" placeholder="Quant."><label for="quantity"></label>
-  <input class="shopping-list__input" data-type="price" type="text" name="price" id="price" placeholder="Price"><label for="price"></label>
+			
+<form action="" method="post" onsubmit="return false;"><!-- Prevent form submittion -->
+  <input class="shopping-list__input  shopping-list__input--big" data-type="item" type="text" name="item" id="item" placeholder="Add items to your Shopping list">
+  <input class="shopping-list__input" data-type="quantity" type="text" name="quantity" id="quantity" placeholder="Quant.">
+  <input class="shopping-list__input" data-type="price" type="text" name="price" id="price" placeholder="Price">
   <button class="btn  btn--green  btn--big" type="button">Add</button>
 </form>
 		</div>
 </div>
-		<table class="list  list--color  active">
+		<table id="Shopping list" class="list  list--color  active">
           <tr class="list__description  list__description--color">
            <th class="list__number">#</th>
 						      <th>Done</th>
@@ -52,7 +53,7 @@
 		<h2 class="shopping-list__title">Done Items</h2>
 
 </div>
-		<table class="list  list--color  done">
+		<table id="Done" class="list  list--color  done">
           <tr class="list__description  list__description--color">
            <th class="list__number">#</th>
 						      <th>Done</th>
@@ -79,7 +80,7 @@
 		<h2 class="shopping-list__title">Deleted</h2>
 
 </div>
-		<table class="list  list--color  deleted">
+		<table id="Deleted" class="list  list--color  deleted">
           <tr class="list__description  list__description--color">
            <th class="list__number">#</th>
 						      <th>Done</th>
