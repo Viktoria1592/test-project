@@ -12,16 +12,20 @@
   var DoneItemsTable = document.querySelector('.done');
   var DeletedItemsTable = document.querySelector('.deleted');
 
-  // This should be refactored
-  // Form.addEventListener('change', function (event) {
-  //   if (!ItemName.value || !ItemQuantity.value || !ItemPrice.value) {
-  //     event.preventDefault();
-  //   } else {
-  //     ButtonAdd.innerHTML = 'Update';
-  //     ButtonAdd.classList.remove('btn--green');
-  //     ButtonAdd.classList.add('btn--blue');
-  //   }
-  // });
+  var initTables = function() {
+    var tabNavigationLinks = document.querySelectorAll("a.app-tabs__item");
+    [].forEach.call(tabNavigationLinks, el => {
+      populateTable(el.innerHTML);
+    })
+  }();
+
+  function populateTable(tableId) {
+    var arr = getFromLocalStorage(tableId);
+    var container = document.getElementById(tableId);
+    arr.forEach(el => {
+        renderItem(el, container);
+    });
+  }
 
   function resetForm() {
     Form.reset();
@@ -30,7 +34,7 @@
     ButtonAdd.classList.add('btn--green');
   }
 
-  function getElementFromTemplate(data) {
+  function getElementFromTemplate() {
     if ('content' in template) {
       var element = template.content.children[0].cloneNode(true);
     } else {
@@ -46,7 +50,8 @@
       event.preventDefault();
       alert(validationMessage);
     } else {
-      renderItems();
+      pushToArr(getCurrentSectionName() ,item);
+      renderItem(item);
     };
   });
 
@@ -60,65 +65,81 @@
     return "";                
 }
 
-  function renderItems() {
-    var element = getElementFromTemplate(item);
-    Container.appendChild(element);
-    CopyItem(element);
-    initDelete();
+  function renderItem(item, container) {
+    var element = getElementFromTemplate();
+    var container = container || Container;
+    container.appendChild(element);
+    CopyItem(element, item);
+    initDelete(element);
     DoneItems();
     calcPosition()
     sum();
     resetForm();
-    initEdit();
-
+    initEdit(element);
   };
+
 
   function calcPosition() {
     [].forEach.call(Tables, function (el) {
-      [].forEach.call(el.querySelectorAll('.counter'), function (number) {
-        number.innerHTML = number.parentNode.rowIndex;
+      [].forEach.call(el.querySelectorAll('.counter'), function (number, index) {
+        number.innerHTML = index + 1;
       });
     });
   }
 
-
-  function CopyItem(parent) {
-    parent.querySelector('.list__name').innerHTML = ItemName.value;
-    parent.querySelector('.list__quantity').innerHTML = ItemQuantity.value;
-    parent.querySelector('.list__price').innerHTML = ItemPrice.value;
+  function CopyItem(parent, item) {
+    if(parent && item) {
+      parent.querySelector('.list__name').innerHTML = item.name;
+      parent.querySelector('.list__quantity').innerHTML = item.quantity;
+      parent.querySelector('.list__price').innerHTML = +item.price;
+    }
   }
-    function initDelete() {
-        [].forEach.call(document.querySelectorAll('.btn--deleted'), function (el) {
-      el.addEventListener('click', RemoveItemsinDelete);
-    });
+    function initDelete(element) {
+      var container = element.parentElement;
+      if(container !== DeletedItemsTable) {
+        element.querySelector(".btn--deleted").addEventListener('click', RemoveItemsinDelete.bind(element));
+      } else {
+        element.querySelector(".btn--deleted").addEventListener('click', function() {
+          if(window.confirm('Delete the item permanently?')) {
+            var tr = getParents(this, 'tr')[0]
+            var id = Number(tr.firstElementChild.innerHTML) - 1;
+            deleteFromArr(DeletedItemsTable.id, id);
+            DeletedItemsTable.removeChild(tr);
+          }
+        });
+      }
+
   }
     function RemoveItemsinDelete() {
-        var Button = document.querySelector('.btn--deleted');
-      var DeletedItem = Button.parentNode.parentNode.cloneNode(true);
-             DeletedItemsTable.insertBefore(DeletedItem, DeletedItemsTable.children[1]);
-      ActiveItemsTable.removeChild(Button.parentNode.parentNode);
+      var Button = this.querySelector('.btn--deleted');
+      var tr = getParents(Button, 'tr')[0];
+      var id = Number(tr.firstElementChild.innerHTML) - 1;
+      var deleted = deleteFromArr(ActiveItemsTable.id, id);
+      pushToArr(DeletedItemsTable.id, deleted);
+      var DeletedItem = tr.cloneNode(true);
+      DeletedItemsTable.appendChild(DeletedItem);
+      ActiveItemsTable.removeChild(tr);
       var DeleteButton = DeletedItem.querySelector('.btn--edit');
       DeleteButton.style.display = 'none';
-      Delete();
         sum();
         calcPosition();
+        initDelete(DeletedItem);
     }
       function DoneItems() {
       [].forEach.call(Container.querySelectorAll('.list__done'), function (el) {
       el.addEventListener('click', function() {
             if (el.checked) {
         var DoneItem = el.parentNode.parentNode.cloneNode(true); // cloning a node does not copy event listeners
-        DoneItemsTable.insertBefore(DoneItem, DoneItemsTable.children[1]);
+        DoneItemsTable.appendChild(DoneItem);
         ActiveItemsTable.removeChild(el.parentNode.parentNode);
         var DoneButton = DoneItem.querySelector('.btn--edit');
         DoneButton.style.display = 'none';
         var ButtonDeleteinDone = DoneItemsTable.querySelector('.btn--deleted');
         ButtonDeleteinDone.onclick = function () {
           var DeletedIteminDone = ButtonDeleteinDone.parentNode.parentNode.cloneNode(true);
-          DeletedItemsTable.insertBefore(DeletedIteminDone, DeletedItemsTable.children[1]);
+          DeletedItemsTable.appendChild(DeletedIteminDone);
           DoneItemsTable.removeChild(ButtonDeleteinDone.parentNode.parentNode);
         }
-         Delete();
             sum();
         calcPosition();
       }
@@ -139,22 +160,11 @@
     });
   }
 
-
-  function Delete() {
-       [].forEach.call(DeletedItemsTable.querySelectorAll('.btn--deleted'), function (el) {
-      el.addEventListener('click', function() {
-          DeletedItemsTable.removeChild(el.parentNode.parentNode);
-      });
-    });
-}
   
     function editItem() {
-var parent = getParents(this, 'tr')[0];
 
-    [].forEach.call(ActiveItemsTable.querySelectorAll('.list__item--copy'), function (el) {
-        el.style.backgroundColor = 'skyblue';
-
-    });
+    var parent = getParents(this, 'tr')[0];
+    parent.style.backgroundColor = 'skyblue';
 
     ButtonAdd.classList.remove('btn--green');
     ButtonAdd.classList.add('btn--blue');
@@ -185,13 +195,17 @@ var parent = getParents(this, 'tr')[0];
     resetForm();
     calcSum();
   }
-      function initEdit() {
-    [].forEach.call(ActiveItemsTable.querySelectorAll('.btn--edit'), function (el) {
-      el.addEventListener('click', editItem);
-    });
-  }
+      function initEdit(element) {
+        var container = element.parentElement;
+        var editButton = element.querySelector(".btn--edit");
+        if(container === ActiveItemsTable) {
+          editButton.style.display = 'initial';
+          editButton.addEventListener('click', editItem.bind(element));
+        } else {
+          editButton.style.display = 'none';
+        }
+      }
   var getParents = function (elem, selector) {
-
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.matchesSelector ||
@@ -206,14 +220,9 @@ var parent = getParents(this, 'tr')[0];
           return i > -1;
         };
     }
-
  
     var parents = [];
-
-   
     for (; elem && elem !== document; elem = elem.parentNode) {
-
-     
       if (selector) {
         if (elem.matches(selector)) {
           parents.push(elem);
@@ -221,11 +230,8 @@ var parent = getParents(this, 'tr')[0];
       } else {
         parents.push(elem);
       }
-
     }
-
     return parents;
-
   };
 
   /* Utility functions */
@@ -254,5 +260,9 @@ var parent = getParents(this, 'tr')[0];
       let arr = getFromLocalStorage(arrName);
       arr.splice(id, 0, item);
       setToLocalStorage(arrName, arr);
+  }
+
+  function getCurrentSectionName() {
+    return document.querySelector("a.is-active").innerHTML;
   }
 })();
