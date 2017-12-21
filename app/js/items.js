@@ -71,7 +71,7 @@
     container.appendChild(element);
     CopyItem(element, item);
     initDelete(element);
-    DoneItems();
+    doneItem(element);
     calcPosition()
     sum();
     resetForm();
@@ -92,12 +92,13 @@
       parent.querySelector('.list__name').innerHTML = item.name;
       parent.querySelector('.list__quantity').innerHTML = item.quantity;
       parent.querySelector('.list__price').innerHTML = +item.price;
+      parent.querySelector('.list__done').checked = item.done;
     }
   }
     function initDelete(element) {
       var container = element.parentElement;
       if(container !== DeletedItemsTable) {
-        element.querySelector(".btn--deleted").addEventListener('click', RemoveItemsinDelete.bind(element));
+        element.querySelector(".btn--deleted").addEventListener('click', RemoveItemsinDelete.bind(element, container));
       } else {
         element.querySelector(".btn--deleted").addEventListener('click', function() {
           if(window.confirm('Delete the item permanently?')) {
@@ -105,48 +106,59 @@
             var id = Number(tr.firstElementChild.innerHTML) - 1;
             deleteFromArr(DeletedItemsTable.id, id);
             DeletedItemsTable.removeChild(tr);
+            sum();
           }
         });
       }
 
   }
-    function RemoveItemsinDelete() {
+    function RemoveItemsinDelete(container) {
       var Button = this.querySelector('.btn--deleted');
       var tr = getParents(Button, 'tr')[0];
       var id = Number(tr.firstElementChild.innerHTML) - 1;
-      var deleted = deleteFromArr(ActiveItemsTable.id, id);
+      var deleted = deleteFromArr(container.id, id);
       pushToArr(DeletedItemsTable.id, deleted);
       var DeletedItem = tr.cloneNode(true);
       DeletedItemsTable.appendChild(DeletedItem);
-      ActiveItemsTable.removeChild(tr);
+      container.removeChild(tr);
       var DeleteButton = DeletedItem.querySelector('.btn--edit');
       DeleteButton.style.display = 'none';
         sum();
         calcPosition();
         initDelete(DeletedItem);
     }
-      function DoneItems() {
-      [].forEach.call(Container.querySelectorAll('.list__done'), function (el) {
-      el.addEventListener('click', function() {
-            if (el.checked) {
-        var DoneItem = el.parentNode.parentNode.cloneNode(true); // cloning a node does not copy event listeners
-        DoneItemsTable.appendChild(DoneItem);
-        ActiveItemsTable.removeChild(el.parentNode.parentNode);
-        var DoneButton = DoneItem.querySelector('.btn--edit');
-        DoneButton.style.display = 'none';
-        var ButtonDeleteinDone = DoneItemsTable.querySelector('.btn--deleted');
-        ButtonDeleteinDone.onclick = function () {
-          var DeletedIteminDone = ButtonDeleteinDone.parentNode.parentNode.cloneNode(true);
-          DeletedItemsTable.appendChild(DeletedIteminDone);
-          DoneItemsTable.removeChild(ButtonDeleteinDone.parentNode.parentNode);
+    function doneItem(element) {
+      element.querySelector('.list__done').addEventListener('click', function() {
+
+        var container = getParents(this, 'table')[0];
+        if (container !== DeletedItemsTable) {
+          var tr = getParents(this, 'tr')[0];
+          var id = Number(tr.firstElementChild.innerHTML) - 1;
+          var DoneItem = tr.cloneNode(true);
+          if (this.checked) {
+            var deleted = deleteFromArr(ActiveItemsTable.id, id);
+            deleted.done = true;
+            pushToArr(DoneItemsTable.id, deleted);
+            DoneItem.querySelector('.list__done').checked;
+            DoneItemsTable.appendChild(DoneItem);
+            ActiveItemsTable.removeChild(tr);
+          } else {
+            var deleted = deleteFromArr(DoneItemsTable.id, id);
+            deleted.done = false;
+            pushToArr(ActiveItemsTable.id, deleted);
+            DoneItem.querySelector('.list__done').checked = false;
+            ActiveItemsTable.appendChild(DoneItem);
+            DoneItemsTable.removeChild(tr);
+          }
+          doneItem(DoneItem);
+          initDelete(DoneItem);
+          initEdit(DoneItem);
+          sum();
+          calcPosition();
         }
-            sum();
-        calcPosition();
-      }
       });
                 
-    });
-  };
+    }
       
   function sum() {
       [].forEach.call(Tables, function (el) {
